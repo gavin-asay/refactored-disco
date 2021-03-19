@@ -66,7 +66,18 @@ const UserControllers = {
 				res.status(404).json({ message: 'No user found with this id.' });
 				return;
 			}
-			res.json(dbUserData);
+
+			const { thoughts } = dbUserData;
+			const deleteCascade = await Thought.deleteMany({ _id: { $in: thoughts } }); // thoughts is an array of _ids for deleted user's thoughts
+
+			res.json({
+				dbUserData,
+				thoughts:
+					!deleteCascade || !deleteCascade.length
+						? 'No associated thoughts deleted.'
+						: 'Associated thoughts deleted successfully.',
+				// evaluate deleteMany result and send appropriate message
+			});
 		} catch (err) {
 			console.log(err);
 			res.status(500).json(err);
