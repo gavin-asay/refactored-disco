@@ -18,11 +18,7 @@ const UserControllers = {
 
 	getSingleUser: async function ({ params }, res) {
 		try {
-			console.log(params.id);
-			const dbUserData = await User.findById(params.id)
-				.populate({ path: 'Thought', select: '-createdAt' })
-				.populate({ path: 'User' }); // since we have a formatted timestamp getter, don't also include raw createdAt date
-
+			const dbUserData = await User.findById(params.id).populate({ path: 'thoughts', select: '-createdAt' }); // since we have a formatted timestamp getter, don't also include raw createdAt date
 			if (!dbUserData) {
 				res.status(404).json({ message: 'No user found with this id.' });
 				return;
